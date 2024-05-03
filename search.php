@@ -132,12 +132,17 @@ class Search
     }
 
     private $sortByScoreAndAuthority = "ORDER BY (d.da+p.offscore+(1.5*p.score))/3 DESC";
-    private $search_result = "p.title, p.description, p.url, d.name, d.favicon FROM page p INNER JOIN domain d ON p.domain = d.id";
+    private $search_result = "p.id, p.title, p.description, p.url, d.name, d.favicon FROM page p INNER JOIN domain d ON p.domain = d.id";
 
     private function filterSortAndLimit()
     {
         $alreadyShown = $this->filterAlreadyShown();
-        $string = "NOT {$alreadyShown} {$this->sortByScoreAndAuthority} LIMIT 0, 10";
+        if ($alreadyShown === "IN []") {
+            $string = "{$this->sortByScoreAndAuthority} LIMIT 0, 10";
+        } else {
+            $string = "AND NOT {$alreadyShown} {$this->sortByScoreAndAuthority} LIMIT 0, 10";
+
+        }
         return $string;
     }
     private function indexToAlreadyShownAndReturn($query)
@@ -149,13 +154,13 @@ class Search
         }
         return $result;
     }
-    private function getByHeading()
+    public function getByHeading()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $query = mysqli_query(
             $this->con,
             "SELECT {$this->search_result}
-            WHERE heading LIKE '%{$this->keyword}% AND {$filterSortAndLimit}'; 
+            WHERE heading LIKE '%{$this->keyword}%' {$filterSortAndLimit}; 
             "
         );
         return $this->indexToAlreadyShownAndReturn($query);
@@ -167,7 +172,7 @@ class Search
         $query = mysqli_query(
             $this->con,
             "SELECT {$this->search_result}
-            WHERE hlevels LIKE '%{$this->keyword}% AND {$filterSortAndLimit}
+            WHERE hlevels LIKE '%{$this->keyword}%' {$filterSortAndLimit}
             "
         );
         return $this->indexToAlreadyShownAndReturn($query);
@@ -179,7 +184,7 @@ class Search
         $query = mysqli_query(
             $this->con,
             "SELECT {$this->search_result}
-            WHERE content LIKE '%{$this->keyword}% AND {$filterSortAndLimit}'
+            WHERE content LIKE '%{$this->keyword}%' {$filterSortAndLimit}
             "
         );
         return $this->indexToAlreadyShownAndReturn($query);
@@ -230,7 +235,7 @@ class Search
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("AND", "AND");
         $query = mysqli_query($this->con, "
-            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+            SELECT {$this->search_result} WHERE {$condition} {$filterSortAndLimit}; 
         ");
         return $this->indexToAlreadyShownAndReturn($query);
 
@@ -240,7 +245,7 @@ class Search
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("AND", "OR");
         $query = mysqli_query($this->con, "
-            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+            SELECT {$this->search_result} WHERE {$condition} {$filterSortAndLimit}; 
         ");
         return $this->indexToAlreadyShownAndReturn($query);
 
@@ -250,7 +255,7 @@ class Search
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("OR", "AND");
         $query = mysqli_query($this->con, "
-            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+            SELECT {$this->search_result} WHERE {$condition} {$filterSortAndLimit}; 
         ");
         return $this->indexToAlreadyShownAndReturn($query);
 
@@ -260,7 +265,7 @@ class Search
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("OR", "OR");
         $query = mysqli_query($this->con, "
-            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+            SELECT {$this->search_result} WHERE {$condition} {$filterSortAndLimit}; 
         ");
         return $this->indexToAlreadyShownAndReturn($query);
 
