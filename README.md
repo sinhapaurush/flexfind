@@ -24,4 +24,5 @@ foreach ($results as $result){
         <p>$desc</p>
     HTML;
 }
+$algorithm->close();
 ```

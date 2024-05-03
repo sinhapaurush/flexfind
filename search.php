@@ -149,7 +149,7 @@ class Search
         }
         return $result;
     }
-    public function getByHeading()
+    private function getByHeading()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $query = mysqli_query(
@@ -161,7 +161,7 @@ class Search
         return $this->indexToAlreadyShownAndReturn($query);
     }
 
-    public function getByOtherHeadings()
+    private function getByOtherHeadings()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $query = mysqli_query(
@@ -173,7 +173,7 @@ class Search
         return $this->indexToAlreadyShownAndReturn($query);
     }
 
-    public function getInContent()
+    private function getInContent()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $query = mysqli_query(
@@ -201,7 +201,7 @@ class Search
     private $searchable_columns = ['title', 'description', 'keywords', 'heading', 'content', 'hlevels'];
 
 
-    public function internalQuery($col, $sep, $query_array)
+    private function internalQuery($col, $sep, $query_array)
     {
         $string = "";
         foreach ($query_array as $word) {
@@ -225,7 +225,7 @@ class Search
         return $string;
     }
 
-    public function searchWordToExistInAllColumns()
+    private function searchWordToExistInAllColumns()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("AND", "AND");
@@ -235,7 +235,7 @@ class Search
         return $this->indexToAlreadyShownAndReturn($query);
 
     }
-    public function searchAllWordsToExistInAnyColumn()
+    private function searchAllWordsToExistInAnyColumn()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("AND", "OR");
@@ -245,7 +245,7 @@ class Search
         return $this->indexToAlreadyShownAndReturn($query);
 
     }
-    public function searchWordsToExistInAnyColDistributively()
+    private function searchWordsToExistInAnyColDistributively()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("OR", "AND");
@@ -255,7 +255,7 @@ class Search
         return $this->indexToAlreadyShownAndReturn($query);
 
     }
-    public function weakFindInAnyCol()
+    private function weakFindInAnyCol()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
         $condition = $this->searchAllCols("OR", "OR");
