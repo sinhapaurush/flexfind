@@ -201,18 +201,68 @@ class Search
     private $searchable_columns = ['title', 'description', 'keywords', 'heading', 'content', 'hlevels'];
 
 
-    private function searchAllWordsInAnyOneColumn(){
+    public function internalQuery($col, $sep, $query_array)
+    {
         $string = "";
-        foreach($this->searchable_columns as $col){
-            $string.= "($col LIKE )";
+        foreach ($query_array as $word) {
+            $string .= "$col LIKE '%$word%' $sep ";
         }
+        $string = rtrim($string, " $sep ");
+        return $string;
+    }
+    private function searchAllCols($int, $ext)
+    {
+        $keywords = $this->filterQuery($this->keyword);
+        $keywords = $this->removeUnwanted($keywords);
+        $keywords = explode(" ", $keywords);
+
+        $string = "";
+        foreach ($this->searchable_columns as $col) {
+            $intQ = $this->internalQuery($col, $int, $keywords);
+            $string .= "($intQ) $ext ";
+        }
+        $string = rtrim($string, " $ext ");
+        return $string;
     }
 
-    public function searchAllWords()
+    public function searchWordToExistInAllColumns()
     {
         $filterSortAndLimit = $this->filterSortAndLimit();
-        $keyword = $this->filterQuery($this->keyword);
-        $keyword = $this->removeUnwanted($keyword);
+        $condition = $this->searchAllCols("AND", "AND");
+        $query = mysqli_query($this->con, "
+            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+        ");
+        return $this->indexToAlreadyShownAndReturn($query);
+
+    }
+    public function searchAllWordsToExistInAnyColumn()
+    {
+        $filterSortAndLimit = $this->filterSortAndLimit();
+        $condition = $this->searchAllCols("AND", "OR");
+        $query = mysqli_query($this->con, "
+            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+        ");
+        return $this->indexToAlreadyShownAndReturn($query);
+
+    }
+    public function searchWordsToExistInAnyColDistributively()
+    {
+        $filterSortAndLimit = $this->filterSortAndLimit();
+        $condition = $this->searchAllCols("OR", "AND");
+        $query = mysqli_query($this->con, "
+            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+        ");
+        return $this->indexToAlreadyShownAndReturn($query);
+
+    }
+    public function weakFindInAnyCol()
+    {
+        $filterSortAndLimit = $this->filterSortAndLimit();
+        $condition = $this->searchAllCols("OR", "OR");
+        $query = mysqli_query($this->con, "
+            SELECT {$this->search_result} WHERE {$condition} AND {$filterSortAndLimit}; 
+        ");
+        return $this->indexToAlreadyShownAndReturn($query);
 
     }
     public function search($page)
