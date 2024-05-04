@@ -28,10 +28,10 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `domain` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(250) NOT NULL DEFAULT '',
   `da` int(1) NOT NULL,
-  `favicon` text NOT NULL DEFAULT ''
+  `favicon` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -41,18 +41,18 @@ CREATE TABLE `domain` (
 --
 
 CREATE TABLE `page` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `title` varchar(250) NOT NULL DEFAULT '',
   `description` varchar(250) NOT NULL DEFAULT '',
-  `keywords` text NOT NULL DEFAULT '',
-  `heading` text NOT NULL DEFAULT '',
-  `content` longtext NOT NULL DEFAULT '',
+  `keywords` text NOT NULL,
+  `heading` text NOT NULL,
+  `content` longtext NOT NULL,
   `score` int(11) NOT NULL DEFAULT 1,
   `hlevels` text NOT NULL,
   `url` text NOT NULL,
   `domain` int(11) DEFAULT NULL,
   `offscore` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) E
 
 --
 -- Indexes for dumped tables

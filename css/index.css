@@ -1,0 +1,37 @@
+body > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  font-size: 65px;
+}
+input[type="search"] {
+  width: 65vw;
+  outline: 0;
+  border: 0;
+  padding: 15px;
+}
+.search-box {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  border-radius: 15px;
+  padding-left: 15px;
+}
+.search-box input[type="submit"] {
+  background-color: transparent;
+  border: 0;
+  margin-right: 15px;
+}
+input[type="search"]::placeholder {
+  color: #000000;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}

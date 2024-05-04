@@ -26,3 +26,7 @@ foreach ($results as $result){
 }
 $algorithm->close();
 ```
+
+Avadmin@12
+root
+search
